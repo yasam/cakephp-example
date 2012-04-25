@@ -32,4 +32,41 @@ App::uses('Controller', 'Controller');
  * @link http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
+    public $helpers = array('Html', 'Form', 'Session', 'Tool');
+    public $components = array(
+		'Session',
+		'Auth' => array(
+			'loginAction' => array('controller' => 'users', 'action' => 'login'),
+			'loginRedirect' => array('controller' => 'dashboards', 'action' => 'index'),
+			'logoutRedirect' => array('controller' => 'users', 'action' => 'login'),
+			'authorize' => array('Controller') // Added this line
+		)
+    );
+    public function isAuthorized($user) {
+		if ($this->Auth->loggedIn($user) == false) {
+			return false;
+		}
+		
+		if($user['role'] != 'admin')
+		{
+			switch($this->params['controller'])
+			{
+				case 'systems':
+						return false;
+					break;
+				case 'task_recipients':
+					if($this->request->is('post'))
+						return false;
+					break;
+				default:
+					break;
+			}
+
+			if (in_array($this->action, array('add', 'edit', 'delete', 'deleteall','setenabled', 'run'))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 }
