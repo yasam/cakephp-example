@@ -8,6 +8,7 @@
 	<th>Serial</th>
 	<th>IP Addr.</th>
 	<th>Session Start</th>
+	<th>Duration(s)</th>
 	<th>Actions</th>
     </tr>
 </thead>
@@ -29,6 +30,12 @@
     	?></td>
         <td><?php echo $State['State']['ip']; ?></td>
         <td><?php echo $State['State']['ses_start']; ?></td>
+        <td><?php 
+    		$duration = date_diff(date_create(), date_create($State['State']['ses_start']));
+    		//$out = $intervalo->format("Years:%Y,Months:%M,Days:%d,Hours:%H,Minutes:%i,Seconds:%s");
+    		echo $duration->format("%H:%I:%S");
+        
+        ?></td>
         <td>
             <?php echo $this->Form->postLink(
                     'Close',

@@ -9,6 +9,7 @@
 	<th>IP Addr.</th>
 	<th>Session Start</th>
 	<th>Session End</th>
+	<th>Duration</th>
     </tr>
 </thead>
 <tbody>
@@ -21,12 +22,19 @@
         <td><?php echo $State['State']['ip']; ?></td>
         <td><?php echo $State['State']['ses_start']; ?></td>
         <td><?php echo $State['State']['ses_end']; ?></td>
+        <td><?php 
+    		$duration = date_diff(date_create($State['State']['ses_end']),date_create($State['State']['ses_start']));
+    		//$out = $intervalo->format("Years:%Y,Months:%M,Days:%d,Hours:%H,Minutes:%i,Seconds:%s");
+    		echo $duration->format("%H:%I:%S");
+        
+        ?></td>
+
     </tr>
     <?php endforeach; ?>
 </tbody>
 <tfoot>
     <tr>
-	<td colspan="7" style="text-align:center;">
+	<td colspan="8" style="text-align:center;">
 
 <?php
 	//Shows the page numbers
