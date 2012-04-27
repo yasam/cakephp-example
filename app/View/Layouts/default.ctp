@@ -31,9 +31,13 @@ $cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework
 
 		//echo $this->Html->css('cake.generic');
 		echo $this->Html->css('web');
-		echo $this->Html->css('bootstrap.min');
+		echo $this->Html->css('bootstrap');
 		echo $this->Html->script('jquery-1.7.2.min');
 		echo $this->Html->script('cakebootstrap');
+
+		echo $this->Html->script("standardista-table-sorting/common");
+		echo $this->Html->script("standardista-table-sorting/css");
+		echo $this->Html->script("standardista-table-sorting/standardista-table-sorting");
 
 		echo $this->fetch('meta');
 		echo $this->fetch('css');

@@ -1504,8 +1504,8 @@ table {
 
 .table th,
 .table td {
-  padding: 8px;
-  line-height: 18px;
+  padding: 4px;
+  line-height: 14px;
   text-align: left;
   vertical-align: top;
   border-top: 1px solid #dddddd;

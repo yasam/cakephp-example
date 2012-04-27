@@ -1,9 +1,31 @@
 <?php
 class StatesController extends AppController {
     public $name = 'States';
+    public $paginate = array(        
+		'limit' => 20,        
+		'order' => array('State.date' => 'State.ses_end desc')
+	    );
     
-    public function index() {
-		$this->set('States', $this->State->find('all', array('order' => array('State.ses_start ASC'))));
+    public function index($key=null, $key_value=null) {
+		$conditions = array('State.status !='=>'CLOSED');
+
+		if($key != null && $key_value != null)
+			$conditions['State.'.$key] = $key_value;
+	
+		$order = array('State.serial');
+		$order[] = 'State.ses_start DESC';
+		
+		
+		$this->set('States', $this->State->find('all', array('conditions'=>$conditions, 'order'=>$order)));
+    }
+
+    public function old() {
+		$this->paginate['conditions'] = array('State.status' => 'CLOSED');
+		
+		$order = array('State.serial');
+		$order[] = 'State.ses_end DESC';
+		
+		$this->set('States', $this->paginate());
     }
     
     public function add() {
@@ -27,18 +49,30 @@ class StatesController extends AppController {
         }
     }
     
-    public function delete($id) {
+    public function close($id) {
 		if ($this->request->is('get')) {
 			throw new MethodNotAllowedException();
 		}
-		if ($this->State->delete($id)) {
-    		    $this->Session->setFlash('Deleted.');
-    		    $this->redirect($this->referer());
+		
+		$this->State->id = $id;
+		$s = $this->State->read();
+		
+		$fp = fsockopen("127.0.0.1",1900,$errno,$errstr,$timeout=30); 
+		if($fp) 
+		{
+			$params = array('IP'=>$s['State']['ip'], 'PORT'=>$s['State']['port']);
+			$data = array('command'=>array('name'=>'CLOSE','params'=>$params));
+			
+			fputs($fp, json_encode($data));
+			fclose($fp); 
+			$msg = "Closing ".$s['State']['ip'].":".$s['State']['port'];
 		}
-		else{
-		    $this->Session->setFlash('Could not delete.');
-		    $this->render('../Layouts/err');
+		else
+		{
+			$msg = "Internal Error(".$errstr.$errno."), try again."; 
 		}
 		
+		$this->Session->setFlash($msg);
+		$this->redirect($this->referer());
     }
 }
