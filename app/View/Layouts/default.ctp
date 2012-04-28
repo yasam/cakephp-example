@@ -16,7 +16,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-$cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework');
+//$cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework');
+$cakeDescription = "Live Station";
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -45,9 +46,41 @@ $cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework
 	?>
 </head>
 <body>
-	<div id="container">
-		<div id="header">
-			<h1><?php echo $this->Html->link($cakeDescription, 'http://cakephp.org'); ?></h1>
+	<div id="containerx">
+		<div id="header" class="navbar">
+      <div class="navbar-inner">
+        <a class="brand" href="http://www.livestation.com" target="_blank">Live Station</a>
+        <div class="container">
+			<?php 
+        //echo $this->Html->link($cakeDescription, 'http://www.livestation.com'); 
+      ?>
+      <?php
+      $navlist = array('Stations' => array('controller'=>'devices', 'action'=>'index'),
+                    'Connections' => array('controller'=>'states', 'action'=>'index'),
+                    'Reports' => array('controller'=>'states', 'action'=>'old')
+                );
+  
+      ?>
+      <ul class="nav nav-pills">
+        <?php
+          $controller = $this->params['controller'];
+          $action = $this->params['action'];
+    
+          $keys = array_keys($navlist);
+          foreach ($keys as $key):
+            $class = "";
+            if($navlist[$key]['controller'] == $controller && $navlist[$key]['action'] == $action)
+                $class = "active";
+            
+            echo '<li class="'.$class.'">';
+            echo $this->Html->link($key,
+          	                 array('controller' =>$navlist[$key]['controller'] , 'action'=>$navlist[$key]['action']));
+            echo "</li>";
+          endforeach;
+        ?>
+      </ul>
+        </div>
+      </div>
 		</div>
 		<div id="content">
 

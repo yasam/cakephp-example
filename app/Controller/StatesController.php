@@ -2,16 +2,17 @@
 class StatesController extends AppController {
     public $name = 'States';
     public $paginate = array(        
-		'limit' => 20,        
-		'order' => array('State.date' => 'State.ses_end desc')
+		'limit' => 20       
 	    );
     
     public function index($key=null, $key_value=null) {
 		$conditions = array('State.status !='=>'CLOSED');
 
 		if($key != null && $key_value != null)
+        {
 			$conditions['State.'.$key] = $key_value;
-	
+            $this->set('StateFilter', $key);
+	    }
 		$order = array('State.serial');
 		$order[] = 'State.ses_start DESC';
 		
@@ -19,12 +20,20 @@ class StatesController extends AppController {
 		$this->set('States', $this->State->find('all', array('conditions'=>$conditions, 'order'=>$order)));
     }
 
-    public function old() {
-		$this->paginate['conditions'] = array('State.status' => 'CLOSED');
+    public function old($key=null, $key_value=null) {
+		$conditions = array('State.status' => 'CLOSED');
+		if($key != null && $key_value != null)
+        {
+			$conditions['State.'.$key] = $key_value;
+            $this->set('StateFilter', $key);
+	    }
 		
-		$order = array('State.serial');
-		$order[] = 'State.ses_end DESC';
-		
+		$order = array('State.ses_end'=>'DESC');
+		$order['State.serial'] = 'ASC';
+        
+		$this->paginate['conditions'] = $conditions;
+        $this->paginate['order'] = $order;
+        //print_r($this->paginate);
 		$this->set('States', $this->paginate());
     }
     
@@ -66,13 +75,15 @@ class StatesController extends AppController {
 			fputs($fp, json_encode($data));
 			fclose($fp); 
 			$msg = "Closing ".$s['State']['ip'].":".$s['State']['port'];
-		}
+      $class = "alert alert-success";		
+    }
 		else
 		{
-			$msg = "Internal Error(".$errstr.$errno."), try again."; 
+			$msg = "Internal Error(".$errstr.$errno."), try again.";
+      $class = "alert alert-error";
 		}
 		
-		$this->Session->setFlash($msg);
+		$this->Session->setFlash($msg, 'default', array('class'=>$class));
 		$this->redirect($this->referer());
     }
 }

@@ -1,5 +1,11 @@
-<h3>Live Devices</h1>
+<h3>Active Connections</h1>
 <table class="sortable table table-striped">
+<?php
+
+if (count($States) > 0)
+{
+
+?>
 <thead>
     <tr>
 	<th>No</th>
@@ -8,7 +14,7 @@
 	<th>Serial</th>
 	<th>IP Addr.</th>
 	<th>Session Start</th>
-	<th>Duration(s)</th>
+	<th>Duration</th>
 	<th>Actions</th>
     </tr>
 </thead>
@@ -31,9 +37,11 @@
         <td><?php echo $State['State']['ip']; ?></td>
         <td><?php echo $State['State']['ses_start']; ?></td>
         <td><?php 
-    		$duration = date_diff(date_create(), date_create($State['State']['ses_start']));
+        $end = date_create(); 
+    		$duration = date_diff($end, date_create($State['State']['ses_start']));
     		//$out = $intervalo->format("Years:%Y,Months:%M,Days:%d,Hours:%H,Minutes:%i,Seconds:%s");
     		echo $duration->format("%H:%I:%S");
+        //echo date("-H:i:s");
         
         ?></td>
         <td>
@@ -43,6 +51,15 @@
                     array('class' =>'btn btn-mini btn-danger'),
                     'Are you sure?');
             ?>
+            <?php
+                if($State['State']['status'] == 'SUBSCRIBED')
+                {
+                    echo $this->Html->link(
+                        'Add',
+                        array('controller'=>'devices','action' => 'add', $State['State']['id']),
+                        array('class' =>'btn btn-mini btn-primary'));
+                }
+            ?>
 
         </td>
     </tr>
@@ -51,13 +68,23 @@
 </tbody>
 </table>
 <?php
+}
+else
+{
+  echo '<div class="alert alert-warning">There is no active connection.</div>';
+}
+?>
+<?php
     //echo $this->Html->link("Old sessions", array('controller'=>'states','action' => 'old'));
 
-    echo $this->Html->link(
-	    'Old Sessions',
-	    array('controller' => 'states', 'action' => 'old'),
-	    array('class' =>'btn btn-mini btn-info')
-	);
+    if(isset($StateFilter))
+    {
+        echo $this->Html->link(
+    	    'All Active Connections',
+    	    array('controller' => 'states', 'action' => 'index'),
+    	    array('class' =>'btn btn-small btn-info')
+	       );
+    }
 /*
     echo $this->TB->button_link(
 	    'Old Sessions',

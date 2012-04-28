@@ -53,7 +53,16 @@
 </tfoot>
 </table>
 <?php
+    if(isset($StateFilter))
+    {
+        echo $this->Html->link("All Reports", 
+		  array('controller'=>'states', 'action'=>'old'),
+		  array('class' =>'btn btn-small btn-primary'));
+    
+    }
+/*
     echo $this->Html->link("Live sessions", 
 		array('controller'=>'states', 'action'=>'index'),
-		array('class' =>'btn btn-mini btn-info'));
+		array('class' =>'btn btn-small btn-info'));
+*/
 ?>
